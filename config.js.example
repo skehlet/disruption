@@ -1,0 +1,4 @@
+exports.redisHost = '1.2.3.4';
+exports.redisPort = 6379;
+exports.dnodeServerPort = 8011;
+exports.disruptionRealm = 'myrealm';
