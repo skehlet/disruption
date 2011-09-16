@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+  <script src="/dnode.js" type="text/javascript"></script>
+  <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js'></script>
+  <script type="text/javascript">
+
+  $(document).ready(function() {
+
+    $('#loginForm').submit(function() {
+      $('#loginPage').fadeOut({ duration: 'fast' });
+      $('#mainPage').fadeIn();
+      connect($("#username").val());
+      return false;
+    });
+
+    function connect(username) {
+      DNode.connect(function(remote) {
+        remote.handle('chatData', function(message) {
+          addMessage(message);
+        });
+        remote.subscribe('chat');
+        remote.send('chat', 'chatData', 'User ' + username + ' joined.');
+        
+        $('#sendForm').submit(function() {
+          var text = $('#message').val();
+          if (text) {
+            remote.send('chat', 'chatData', text);
+            addMessage({ // no self-echo (yet), have to fake
+              time: new Date().getTime(),
+              sender: username,
+              data: text
+            });
+            $('#message').val('');
+          }
+          return false;
+        });
+      });
+    }
+
+    // http://stackoverflow.com/questions/6020714/escape-html-using-jquery
+    function escapeHtml(str) {
+      return $('<div/>').text(str).html();
+    }
+
+    function addMessage(message) {
+      var date = new Date(message.time);
+      var html = '<tr>';
+      html += '<td class="timestamp">' + date.getFullYear() + '/' + date.getMonth() + '/' + date.getDate();
+      html += ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + '</td>';
+      html += '<td>' + escapeHtml(message.sender) + '</td>';
+      html += '<td>' + escapeHtml(message.data) + '</td>';
+      html += '</tr>';
+      $('#myTable').find('tr:last').after(html);
+    }
+  });
+
+  </script>
+</head>
+<body>
+  <div id="mainPage">
+    <table id="myTable" class="box_round">
+      <tr>
+        <th>Time</th>
+        <th>Who</th>
+        <th>Message</th>
+      </tr>
+    </table>
+
+    <form id="sendForm">
+      <input id="message" type="input" size="32" maxlength="256" placeholder="Type your message here">
+      <input type="submit" value="Send">
+    </form>
+  </div>
+
+  <div id="loginPage" class="box_round">
+    <form id="loginForm">
+      <label for="username">Username:</label>
+      <input id="username" placeholder="guest" value="guest">
+      <input type="submit" value="Login">
+    </form>
+  </div>
+
+
+</body>
+</html>

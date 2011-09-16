@@ -1,0 +1,27 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Helvetica, Arial, sans-serif;
+  color: #555555;
+  padding: 10px;
+}
+
+.header {
+  font-size: 110%;
+}
+
+#loginPage {
+  margin: 10px;
+}
+
+#mainPage {
+  display: none;
+}
+
+#mainPage #myTable {
+  width: 60%;
+  border: 1px solid #aaaaaa;
+}
